@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+<h1>Dashboard Admin</h1>
+
+<p><strong>Total tickets :</strong> {{ totalTickets }}</p>
+<p><strong>Temps moyen de résolution :</strong> {{ avgResolutionTime|number_format(2) }} h</p>
+
+<h2>Tickets par statut</h2>
+<canvas id="statusChart"></canvas>
+
+<h2>Tickets par priorité</h2>
+<canvas id="priorityChart"></canvas>
+
+<h2>Tickets par technicien</h2>
+<canvas id="technicianChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const statusData = {
+    labels: {{ byStatus|map(s => s.label)|json_encode|raw }},
+    datasets: [{
+        data: {{ byStatus|map(s => s.total)|json_encode|raw }},
+    }]
+};
+
+new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: statusData
+});
+
+const priorityData = {
+    labels: {{ byPriority|map(p => p.label)|json_encode|raw }},
+    datasets: [{
+        data: {{ byPriority|map(p => p.total)|json_encode|raw }},
+    }]
+};
+
+new Chart(document.getElementById('priorityChart'), {
+    type: 'bar',
+    data: priorityData
+});
+
+const techData = {
+    labels: {{ byTechnician|map(t => t.label)|json_encode|raw }},
+    datasets: [{
+        data: {{ byTechnician|map(t => t.total)|json_encode|raw }},
+    }]
+};
+
+new Chart(document.getElementById('technicianChart'), {
+    type: 'bar',
+    data: techData
+});
+</script>
+{% endblock %}
