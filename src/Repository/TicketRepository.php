@@ -15,7 +15,7 @@ class TicketRepository extends ServiceEntityRepository
 
     public function countAll(): int
     {
-        return $this->createQueryBuilder('t')
+        return (int) $this->createQueryBuilder('t')
             ->select('COUNT(t.id)')
             ->getQuery()
             ->getSingleScalarResult();
@@ -39,21 +39,40 @@ class TicketRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    // ✅ CORRIGÉ ICI
     public function countByTechnician(): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t.technician AS technician, COUNT(t.id) AS total')
-            ->groupBy('t.technician')
+            ->select('u.email AS technician, COUNT(t.id) AS total')
+            ->join('t.technician', 'u')
+            ->groupBy('u.id')
             ->getQuery()
             ->getResult();
     }
 
-    public function averageResolutionTime(): ?float
-    {
-        return $this->createQueryBuilder('t')
-            ->select('AVG(TIMESTAMPDIFF(HOUR, t.createdAt, t.resolvedAt))')
-            ->where('t.resolvedAt IS NOT NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
+public function averageResolutionTime(): ?float
+{
+    $tickets = $this->createQueryBuilder('t')
+        ->where('t.resolvedAt IS NOT NULL')
+        ->getQuery()
+        ->getResult();
+
+    if (count($tickets) === 0) {
+        return null;
     }
+
+    $totalHours = 0;
+
+    foreach ($tickets as $ticket) {
+        $interval = $ticket->getCreatedAt()->diff($ticket->getResolvedAt());
+        $hours =
+            ($interval->days * 24) +
+            $interval->h +
+            ($interval->i / 60);
+
+        $totalHours += $hours;
+    }
+
+    return round($totalHours / count($tickets), 2);
+}
 }
