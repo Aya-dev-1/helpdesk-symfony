@@ -7,17 +7,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class AdminDashboardController extends AbstractController
+class AdminDashboardController extends AbstractController
 {
     #[Route('/admin/dashboard', name: 'app_admin_dashboard')]
-    public function index(TicketRepository $ticketRepository): Response
+    public function index(TicketRepository $ticketRepo): Response
     {
         return $this->render('admin_dashboard/index.html.twig', [
-            'totalTickets' => $ticketRepository->countAll(),
-            'byStatus' => $ticketRepository->countByStatus(),
-            'byPriority' => $ticketRepository->countByPriority(),
-            'byTechnician' => $ticketRepository->countByTechnician(),
-            'avgResolutionTime' => $ticketRepository->averageResolutionTime(),
+            'totalTickets' => $ticketRepo->countAll(),
+            'ticketsByStatus' => $ticketRepo->countByStatus(),
+            'ticketsByPriority' => $ticketRepo->countByPriority(),
+            'ticketsByTechnician' => $ticketRepo->countByTechnician(),
+            'avgResolutionTime' => $ticketRepo->averageResolutionTime(),
         ]);
     }
 }

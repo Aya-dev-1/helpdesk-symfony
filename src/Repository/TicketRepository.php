@@ -15,7 +15,7 @@ class TicketRepository extends ServiceEntityRepository
 
     public function countAll(): int
     {
-        return (int) $this->createQueryBuilder('t')
+        return $this->createQueryBuilder('t')
             ->select('COUNT(t.id)')
             ->getQuery()
             ->getSingleScalarResult();
@@ -24,7 +24,7 @@ class TicketRepository extends ServiceEntityRepository
     public function countByStatus(): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t.status AS label, COUNT(t.id) AS total')
+            ->select('t.status AS status, COUNT(t.id) AS total')
             ->groupBy('t.status')
             ->getQuery()
             ->getResult();
@@ -33,7 +33,7 @@ class TicketRepository extends ServiceEntityRepository
     public function countByPriority(): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t.priority AS label, COUNT(t.id) AS total')
+            ->select('t.priority AS priority, COUNT(t.id) AS total')
             ->groupBy('t.priority')
             ->getQuery()
             ->getResult();
@@ -42,15 +42,15 @@ class TicketRepository extends ServiceEntityRepository
     public function countByTechnician(): array
     {
         return $this->createQueryBuilder('t')
-            ->select('t.technician AS label, COUNT(t.id) AS total')
+            ->select('t.technician AS technician, COUNT(t.id) AS total')
             ->groupBy('t.technician')
             ->getQuery()
             ->getResult();
     }
 
-    public function averageResolutionTime(): float
+    public function averageResolutionTime(): ?float
     {
-        return (float) $this->createQueryBuilder('t')
+        return $this->createQueryBuilder('t')
             ->select('AVG(TIMESTAMPDIFF(HOUR, t.createdAt, t.resolvedAt))')
             ->where('t.resolvedAt IS NOT NULL')
             ->getQuery()
