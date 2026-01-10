@@ -1,17 +1,174 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" class="h-100">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}HelpDesk{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🎫</text></svg>">
+        
+        {# Fonts #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        {# Bootstrap 5 CSS #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        
+        {# FontAwesome #}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
         {% block stylesheets %}
         {% endblock %}
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+        
+        <style>
+            :root {
+                --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
+                --bs-primary: #4f46e5; /* Indigo 600 */
+                --bs-primary-rgb: 79, 70, 229;
+                --bs-secondary: #64748b; /* Slate 500 */
+                --bs-success: #10b981; /* Emerald 500 */
+                --bs-info: #0ea5e9; /* Sky 500 */
+                --bs-warning: #f59e0b; /* Amber 500 */
+                --bs-danger: #ef4444; /* Red 500 */
+                --bs-light: #f8fafc; /* Slate 50 */
+                --bs-dark: #0f172a; /* Slate 900 */
+            }
+            body {
+                background-color: #f1f5f9; /* Slate 100 */
+                color: #334155;
+            }
+            .navbar {
+                box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+                background-color: #ffffff !important;
+            }
+            .card {
+                border: none;
+                box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+                border-radius: 0.5rem;
+            }
+            .card-header {
+                background-color: transparent;
+                border-bottom: 1px solid #e2e8f0;
+                font-weight: 600;
+                padding: 1rem 1.5rem;
+            }
+            .btn {
+                border-radius: 0.375rem;
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+            }
+            .btn-primary {
+                background-color: var(--bs-primary);
+                border-color: var(--bs-primary);
+            }
+            .btn-primary:hover {
+                background-color: #4338ca; /* Indigo 700 */
+                border-color: #4338ca;
+            }
+            .form-control, .form-select {
+                border-radius: 0.375rem;
+                border-color: #cbd5e1;
+            }
+            .form-control:focus, .form-select:focus {
+                border-color: var(--bs-primary);
+                box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+            }
+            .table > :not(caption) > * > * {
+                padding: 1rem 1rem;
+                vertical-align: middle;
+            }
+            .badge {
+                padding: 0.5em 0.75em;
+                font-weight: 600;
+                border-radius: 9999px;
+            }
+        </style>
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="d-flex flex-column h-100">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+                <div class="container">
+                    <a class="navbar-brand fw-bold text-primary" href="{{ path('app_login') }}">
+                        <i class="fa-solid fa-ticket me-2"></i>HelpDesk
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('app_admin_dashboard') }}"><i class="fa-solid fa-chart-line me-1"></i> Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('admin_ticket_index') }}"><i class="fa-solid fa-layer-group me-1"></i> Tickets</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('admin_users_index') }}"><i class="fa-solid fa-users me-1"></i> Utilisateurs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('admin_notification_index') }}"><i class="fa-solid fa-bell me-1"></i> Notifs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('admin_activity_index') }}"><i class="fa-solid fa-shield-halved me-1"></i> Sécurité</a>
+                                </li>
+                            {% elseif is_granted('IS_AUTHENTICATED_FULLY') %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('app_ticket_index') }}"><i class="fa-solid fa-list me-1"></i> Mes Tickets</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ path('app_ticket_new') }}"><i class="fa-solid fa-plus me-1"></i> Nouveau Ticket</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                        <div class="d-flex align-items-center">
+                            {% if app.user %}
+                                <div class="dropdown">
+                                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-circle-user fa-lg me-1 text-secondary"></i>
+                                        <span class="fw-medium">{{ app.user.email }}</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end text-small" aria-labelledby="dropdownUser1">
+                                        {# <li><a class="dropdown-item" href="#">Profile</a></li> #}
+                                        {# <li><hr class="dropdown-divider"></li> #}
+                                        <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}"><i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion</a></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <a href="{{ path('app_login') }}" class="btn btn-primary btn-sm px-3">Connexion</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-shrink-0 py-4">
+            <div class="container">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% block body %}{% endblock %}
+            </div>
+        </main>
+
+        <footer class="footer mt-auto py-3 bg-white border-top">
+            <div class="container text-center text-muted">
+                <small>&copy; {{ "now"|date("Y") }} HelpDesk System. All rights reserved.</small>
+            </div>
+        </footer>
+
+        {# Bootstrap 5 JS Bundle #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     </body>
 </html>

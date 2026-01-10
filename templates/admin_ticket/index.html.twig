@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Tickets (Admin){% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+            <div>
+                <h1 class="h2 mb-1">Gestion des Tickets</h1>
+                <p class="text-muted">Supervision et assignation des tickets.</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><i class="fa-solid fa-filter me-2"></i>Filtres</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="status" class="form-label text-secondary small text-uppercase fw-bold">Statut</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">Tous</option>
+                            <option value="open" {% if app.request.query.get('status') == 'open' %}selected{% endif %}>Ouvert</option>
+                            <option value="in_progress" {% if app.request.query.get('status') == 'in_progress' %}selected{% endif %}>En cours</option>
+                            <option value="closed" {% if app.request.query.get('status') == 'closed' %}selected{% endif %}>Fermé</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="priority" class="form-label text-secondary small text-uppercase fw-bold">Priorité</label>
+                        <select name="priority" id="priority" class="form-select">
+                            <option value="">Toutes</option>
+                            <option value="low" {% if app.request.query.get('priority') == 'low' %}selected{% endif %}>Basse</option>
+                            <option value="medium" {% if app.request.query.get('priority') == 'medium' %}selected{% endif %}>Moyenne</option>
+                            <option value="high" {% if app.request.query.get('priority') == 'high' %}selected{% endif %}>Haute</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="technician" class="form-label text-secondary small text-uppercase fw-bold">Technicien</label>
+                        <select name="technician" id="technician" class="form-select">
+                            <option value="">Tous</option>
+                            {% for tech in technicians %}
+                                <option value="{{ tech.id }}" {% if app.request.query.get('technician') == tech.id %}selected{% endif %}>
+                                    {{ tech.email }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="submit" class="btn btn-primary flex-grow-1"><i class="fa-solid fa-magnifying-glass me-2"></i>Filtrer</button>
+                            <a href="{{ path('admin_ticket_index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-rotate-left"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="ps-4 py-3">ID</th>
+                                <th class="py-3">Titre</th>
+                                <th class="py-3">Statut</th>
+                                <th class="py-3">Priorité</th>
+                                <th class="py-3">Technicien</th>
+                                <th class="py-3">Créé le</th>
+                                <th class="text-end pe-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for ticket in tickets %}
+                            <tr>
+                                <td class="ps-4 text-muted">#{{ ticket.id }}</td>
+                                <td class="fw-medium text-dark">{{ ticket.titre }}</td>
+                                <td>
+                                    <span class="badge rounded-pill
+                                        {% if ticket.status == 'open' %}bg-success
+                                        {% elseif ticket.status == 'in_progress' %}bg-warning text-dark
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ ticket.status == 'open' ? 'Ouvert' : (ticket.status == 'in_progress' ? 'En cours' : 'Fermé') }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if ticket.priority == 'high' %}
+                                        <span class="text-danger fw-bold"><i class="fa-solid fa-arrow-up me-1"></i>Haute</span>
+                                    {% elseif ticket.priority == 'medium' %}
+                                        <span class="text-warning fw-bold"><i class="fa-solid fa-minus me-1"></i>Moyenne</span>
+                                    {% else %}
+                                        <span class="text-success fw-bold"><i class="fa-solid fa-arrow-down me-1"></i>Basse</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ticket.technician %}
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-light rounded-circle text-primary me-2 d-flex justify-content-center align-items-center" style="width:24px;height:24px;font-size:0.75rem">
+                                                {{ ticket.technician.email|first|upper }}
+                                            </div>
+                                            {{ ticket.technician.email }}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted font-italic">Non assigné</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted small">
+                                    {{ ticket.createdAt|date('d/m/Y H:i') }}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ path('admin_ticket_edit', {'id': ticket.id}) }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        
+                                        <form method="post" action="{{ path('admin_ticket_delete', {'id': ticket.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce ticket ?');" class="d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ticket.id) }}">
+                                            <button class="btn btn-sm btn-outline-danger" title="Supprimer" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="mb-3"><i class="fa-solid fa-check-circle fa-3x opacity-25"></i></div>
+                                    <p class="mb-0">Aucun ticket trouvé.</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

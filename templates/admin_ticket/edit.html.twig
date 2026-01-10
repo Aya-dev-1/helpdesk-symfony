@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Ticket{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Modifier Ticket #{{ ticket.id }}</h1>
+
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-8">
+                {{ form_row(form.titre) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.adminComment) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_row(form.status) }}
+                {{ form_row(form.priority) }}
+                {{ form_row(form.technician) }}
+            </div>
+        </div>
+        
+        <button class="btn btn-primary mt-3">{{ button_label|default('Sauvegarder') }}</button>
+        <a href="{{ path('admin_ticket_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

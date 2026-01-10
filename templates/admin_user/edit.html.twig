@@ -1,0 +1,9 @@
+<h2>Utilisateur</h2>
+
+{{ form_start(form) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.roles) }}
+    {{ form_row(form.plainPassword) }}
+
+    <button type="submit">Enregistrer</button>
+{{ form_end(form) }}

@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Ticket{% endblock %}
+{% block title %}Nouveau Ticket{% endblock %}
 
 {% block body %}
-    <h1>Create new Ticket</h1>
-
-    {{ include('ticket/_form.html.twig') }}
-
-    <a href="{{ path('app_ticket_index') }}">back to list</a>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-header bg-white py-3">
+                <h2 class="h4 mb-0 text-primary">Créer un nouveau ticket</h2>
+            </div>
+            <div class="card-body p-4">
+                {{ include('ticket/_form.html.twig', {'button_label': 'Créer le ticket'}) }}
+            </div>
+            <div class="card-footer bg-light text-center py-3">
+                <a href="{{ path('app_ticket_index') }}" class="text-decoration-none text-muted">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

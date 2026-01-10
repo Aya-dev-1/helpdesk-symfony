@@ -9,21 +9,30 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 class TicketType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('titre')
-            ->add('status')
-            ->add('priority')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
+            ->add('titre', TextType::class, [
+                'label' => 'Titre du ticket'
             ])
-            ->add('resolvedAt')
-            ->add('technician', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
+            ->add('description', TextareaType::class, [
+                'label' => 'Description détaillée',
+                'required' => false,
+                'attr' => ['rows' => 5]
+            ])
+            ->add('priority', ChoiceType::class, [
+                'label' => 'Priorité',
+                'choices' => [
+                    'Basse' => 'low',
+                    'Moyenne' => 'medium',
+                    'Haute' => 'high',
+                ],
             ])
         ;
     }

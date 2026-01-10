@@ -1,32 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des utilisateurs{% endblock %}
+{% block title %}Gestion Utilisateurs{% endblock %}
 
 {% block body %}
-<h1>Gestion des utilisateurs</h1>
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+            <div>
+                <h1 class="h2 mb-1">Gestion des Utilisateurs</h1>
+                <p class="text-muted">Administrez les comptes et les rôles.</p>
+            </div>
+            <a href="{{ path('admin_users_new') }}" class="btn btn-primary shadow-sm">
+                <i class="fa-solid fa-user-plus me-2"></i>Ajouter
+            </a>
+        </div>
 
-<a href="{{ path('admin_users_new') }}">➕ Ajouter un utilisateur</a>
-
-<table border="1" cellpadding="5" cellspacing="0">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Rôles</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles|join(', ') }}</td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Aucun utilisateur trouvé</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="ps-4 py-3">ID</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Rôles</th>
+                                <th class="text-end pe-4 py-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td class="ps-4 text-muted">#{{ user.id }}</td>
+                                <td class="fw-medium text-dark">{{ user.email }}</td>
+                                <td>
+                                    {% for role in user.roles %}
+                                        <span class="badge 
+                                            {% if role == 'ROLE_ADMIN' %}bg-danger
+                                            {% elseif role == 'ROLE_TECHNICIAN' %}bg-info text-dark
+                                            {% else %}bg-secondary{% endif %} me-1">
+                                            {{ role }}
+                                        </span>
+                                    {% endfor %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ path('admin_users_edit', {id: user.id}) }}" class="btn btn-sm btn-outline-primary" title="Modifier">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a href="{{ path('admin_users_delete', {id: user.id}) }}" 
+                                           class="btn btn-sm btn-outline-danger" 
+                                           onclick="return confirm('Supprimer cet utilisateur ?')"
+                                           title="Supprimer">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    Aucun utilisateur trouvé.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Journal d'activité{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+            <div>
+                <h1 class="h2 mb-1">Journal d'activité</h1>
+                <p class="text-muted">Historique des actions (Derniers 100).</p>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="window.location.reload();">
+                <i class="fa-solid fa-rotate me-2"></i>Actualiser
+            </button>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-secondary">
+                            <tr>
+                                <th class="ps-4 py-3">Date</th>
+                                <th class="py-3">Utilisateur</th>
+                                <th class="py-3">Action</th>
+                                <th class="py-3">Description</th>
+                                <th class="text-end pe-4 py-3">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                            <tr>
+                                <td class="ps-4 text-muted small">
+                                    {{ log.createdAt|date('d/m/Y H:i:s') }}
+                                </td>
+                                <td>
+                                    {% if log.user %}
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-regular fa-user-circle me-2 text-secondary"></i>
+                                            {{ log.user.email }}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted font-italic">Système/Anonyme</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if 'DELETE' in log.action %}bg-danger
+                                        {% elseif 'CREATE' in log.action %}bg-success
+                                        {% elseif 'UPDATE' in log.action %}bg-warning text-dark
+                                        {% else %}bg-info text-dark{% endif %}">
+                                        {{ log.action }}
+                                    </span>
+                                </td>
+                                <td>{{ log.description }}</td>
+                                <td class="text-end pe-4 text-muted small font-monospace">{{ log.ipAddress }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    Aucune activité enregistrée.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -16,6 +16,12 @@ class Ticket
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $adminComment = null;
+
     #[ORM\Column(length: 50)]
     private string $status;
 
@@ -34,6 +40,7 @@ class Ticket
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->status = 'open';
     }
 
     // ---------------- GETTERS / SETTERS ----------------
@@ -51,6 +58,28 @@ class Ticket
     public function setTitre(string $titre): static
     {
         $this->titre = $titre;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getAdminComment(): ?string
+    {
+        return $this->adminComment;
+    }
+
+    public function setAdminComment(?string $adminComment): static
+    {
+        $this->adminComment = $adminComment;
         return $this;
     }
 

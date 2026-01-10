@@ -30,6 +30,11 @@ final class TicketController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Set default status if not set (though constructor does it, explicit is good)
+            if (!$ticket->getStatus()) {
+                $ticket->setStatus('open');
+            }
+            
             $entityManager->persist($ticket);
             $entityManager->flush();
 
