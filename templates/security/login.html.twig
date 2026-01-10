@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <div class="mb-3">
+                    <i class="bi bi-tools display-4"></i>
+                </div>
+                <h3 class="h4 mb-0 fw-bold">HelpDesk</h3>
+                <p class="mb-0 opacity-75">Système de gestion des tickets</p>
+            </div>
+            <div class="card-body p-4">
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>
+                        <a href="{{ path('app_logout') }}" class="alert-link">Déconnexion</a>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endif %}
+
+                <form method="post" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label fw-semibold">
+                            <i class="bi bi-envelope me-1"></i>Email
+                        </label>
+                        <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" 
+                               class="form-control form-control-lg" autocomplete="email" required autofocus
+                               placeholder="votre@email.com">
+                        <div class="invalid-feedback">
+                            Veuillez entrer une adresse email valide.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="inputPassword" class="form-label fw-semibold">
+                            <i class="bi bi-lock me-1"></i>Mot de passe
+                        </label>
+                        <div class="input-group">
+                            <input type="password" name="_password" id="inputPassword" 
+                                   class="form-control form-control-lg" autocomplete="current-password" required
+                                   placeholder="Votre mot de passe">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">
+                            Le mot de passe est requis.
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" type="submit">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light text-center py-3">
+                <small class="text-muted">
+                    Pas encore de compte ? 
+                    <a href="{{ path('app_register') }}" class="text-decoration-none fw-semibold">S'inscrire</a>
+                </small>
+            </div>
+        </div>
+        
+        {# Exemple de comptes de test #}
+        <div class="mt-4 text-center">
+            <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                Comptes de test : admin@helpdesk.com / tech@helpdesk.com / user1@helpdesk.com
+                <br>Mot de passe : password123
+            </small>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle password visibility
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('inputPassword');
+    const toggleIcon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('bi-eye');
+        toggleIcon.classList.add('bi-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('bi-eye-slash');
+        toggleIcon.classList.add('bi-eye');
+    }
+});
+
+// Bootstrap form validation
+(function () {
+  'use strict'
+  const forms = document.querySelectorAll('.needs-validation')
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+<h1>Bonjour {{ user.firstName }},</h1>
+
+<p>Votre ticket a bien été créé.</p>
+
+<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+    <p><strong>Titre :</strong> {{ ticket.title }}</p>
+    <p><strong>Priorité :</strong> {{ ticket.priority }}</p>
+    <p><strong>Statut :</strong> {{ ticket.status }}</p>
+    <p><strong>Description :</strong><br>
+    {{ ticket.description|nl2br }}</p>
+</div>
+
+<p>Un technicien va prendre en charge votre demande prochainement.</p>
+
+<p>Cordialement,<br>
+L'équipe HelpDesk</p>

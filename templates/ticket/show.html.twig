@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1 class="h4 mb-0">{{ ticket.title }}</h1>
+                    <span class="badge bg-secondary">#{{ ticket.id }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Statut:</strong> 
+                            <span class="badge bg-primary">{{ ticket.status }}</span>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <strong>Priorité:</strong> 
+                            <span class="badge bg-warning">{{ ticket.priority }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="text-muted border-bottom pb-2">Description</h5>
+                        <p class="card-text">{{ ticket.description|nl2br }}</p>
+                    </div>
+
+                    {% if ticket.attachment %}
+                        <div class="mb-4">
+                            <h5 class="text-muted border-bottom pb-2">Pièce jointe</h5>
+                            <a href="{{ asset('uploads/attachments/' ~ ticket.attachment) }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                <i class="bi bi-file-earmark"></i> Voir la pièce jointe
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-muted small">
+                        Créé le {{ ticket.createdAt|date('d/m/Y à H:i') }}
+                        {% if ticket.updatedAt %}
+                            (Mis à jour le {{ ticket.updatedAt|date('d/m/Y à H:i') }})
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <a href="{{ path('app_ticket_index') }}" class="btn btn-secondary btn-sm">Retour à la liste</a>
+                </div>
+            </div>
+
+            {# Section Commentaires #}
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Commentaires ({{ ticket.comments|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% for comment in ticket.comments %}
+                        <div class="d-flex mb-3 border-bottom pb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    {{ comment.author.firstName|first|upper }}{{ comment.author.lastName|first|upper }}
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="mb-0">{{ comment.author.fullName }}</h6>
+                                    <small class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+                                </div>
+                                <p class="mb-0 mt-1">{{ comment.content|nl2br }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">Aucun commentaire pour le moment.</p>
+                    {% endfor %}
+
+                    {# Formulaire d'ajout de commentaire #}
+                    <div class="mt-4">
+                        <h6 class="mb-3">Ajouter un commentaire</h6>
+                        {{ form_start(comment_form) }}
+                            {{ form_row(comment_form.content) }}
+                            {{ form_row(comment_form.submit) }}
+                        {{ form_end(comment_form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Informations</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Auteur
+                        <span>{{ ticket.author.email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Assigné à
+                        <span>{{ ticket.assignedTo ? ticket.assignedTo.email : 'Non assigné' }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

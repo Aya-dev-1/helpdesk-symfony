@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Ticket{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Créer un nouveau ticket</h2>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_row(form.title) }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.priority) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(form.attachment) }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.description) }}
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ path('app_ticket_index') }}" class="btn btn-secondary me-md-2">Annuler</a>
+                            <button class="btn btn-primary">{{ button_label|default('Créer le ticket') }}</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
