@@ -11,11 +11,11 @@
             <form method="post" action="{{ path('app_login') }}">
                 <div class="mb-3">
                     <label class="form-label">Nom d'utilisateur</label>
-                    <input type="text" name="_username" value="{{ last_username }}" class="form-control" required autofocus>
+                    <input type="text" name="username" value="{{ last_username }}" class="form-control" required autofocus>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Mot de passe</label>
-                    <input type="password" name="_password" class="form-control" required>
+                    <input type="password" name="password" class="form-control" required>
                 </div>
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                 <button class="btn btn-primary w-100">Connexion</button>
@@ -27,4 +27,3 @@
     </p>
 </div>
 {% endblock %}
-

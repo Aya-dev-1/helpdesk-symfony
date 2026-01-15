@@ -1,7 +1,7 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'plaintext'
         Symfony\Component\Security\Core\User\InMemoryUser: 'plaintext'
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
@@ -28,10 +28,11 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
-                username_parameter: _username
-                password_parameter: _password
+                username_parameter: username
+                password_parameter: password
                 default_target_path: app_tech_dashboard
                 always_use_default_target_path: true
+            entry_point: form_login
             logout:
                 path: app_logout
 
