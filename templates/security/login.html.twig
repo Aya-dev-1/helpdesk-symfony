@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion{% endblock %}
+{% block body %}
+<div class="container my-5" style="max-width: 440px;">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="h4 mb-3 text-center">Se connecter</h1>
+            {% if error %}
+                <div class="alert alert-danger">Identifiants invalides.</div>
+            {% endif %}
+            <form method="post" action="{{ path('app_login') }}">
+                <div class="mb-3">
+                    <label class="form-label">Nom d'utilisateur</label>
+                    <input type="text" name="_username" value="{{ last_username }}" class="form-control" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" name="_password" class="form-control" required>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button class="btn btn-primary w-100">Connexion</button>
+            </form>
+        </div>
+    </div>
+    <p class="text-center text-muted mt-3" style="font-size: .9rem">
+        Utilisateur mémoire: tech / technicien • admin / admin123
+    </p>
+</div>
+{% endblock %}
+

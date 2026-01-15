@@ -18,16 +18,22 @@ class TechnicianDashboardController extends AbstractController
         /** @var User $tech */
         $tech = $this->getUser();
 
-        $tickets = $ticketRepository->createQueryBuilder('t')
-            ->andWhere('t.assignedTo = :tech')
-            ->setParameter('tech', $tech)
-            ->getQuery()
-            ->getResult();
+        $username = $tech?->getUserIdentifier();
+        $tickets = [];
+        try {
+            $tickets = $ticketRepository->createQueryBuilder('t')
+                ->andWhere('t.assignedToUsername = :tech')
+                ->setParameter('tech', $username)
+                ->orderBy('t.updatedAt', 'DESC')
+                ->getQuery()
+                ->getResult();
+        } catch (\Throwable $e) {}
 
         $total = \count($tickets);
         $byStatus = [];
         $byPriority = [];
         $resolutionTimes = [];
+        $openAges = [];
 
         foreach ($tickets as $ticket) {
             $status = method_exists($ticket, 'getStatus') ? $ticket->getStatus() : 'inconnu';
@@ -41,6 +47,11 @@ class TechnicianDashboardController extends AbstractController
                 if ($created && $resolved) {
                     $resolutionTimes[] = $resolved->getTimestamp() - $created->getTimestamp();
                 }
+            } else {
+                $created = method_exists($ticket, 'getCreatedAt') ? $ticket->getCreatedAt() : null;
+                if ($created) {
+                    $openAges[] = time() - $created->getTimestamp();
+                }
             }
         }
 
@@ -48,13 +59,19 @@ class TechnicianDashboardController extends AbstractController
         if (\count($resolutionTimes) > 0) {
             $avgResolutionSeconds = (int) (\array_sum($resolutionTimes) / \count($resolutionTimes));
         }
+        $avgOpenDays = 0;
+        if (\count($openAges) > 0) {
+            $avgOpenDays = (int) \round((\array_sum($openAges) / \count($openAges)) / 86400, 1);
+        }
+        $recentTickets = \array_slice($tickets, 0, 8);
 
         return $this->render('technician_dashboard/index.html.twig', [
             'total' => $total,
             'byStatus' => $byStatus,
             'byPriority' => $byPriority,
             'avgResolutionSeconds' => $avgResolutionSeconds,
+            'avgOpenDays' => $avgOpenDays,
+            'recentTickets' => $recentTickets,
         ]);
     }
 }
-

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Tableau de bord technicien{% endblock %}
-
 {% block body %}
 <div class="container my-4">
-    <h1 class="h3 mb-3">Mon tableau de bord</h1>
-
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Mon tableau de bord</h1>
+        <a class="btn btn-outline-secondary btn-sm" href="{{ path('tech_ticket_index') }}">Mes tickets</a>
+    </div>
     <div class="row g-3">
         <div class="col-md-4">
             <div class="card text-center">
@@ -26,57 +26,84 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6">{{ avgOpenDays }} j</div>
+                    <div class="text-muted">Âge moyen des tickets ouverts</div>
+                </div>
+            </div>
+        </div>
     </div>
-
     <div class="row g-3 mt-1">
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card" style="height: 360px">
                 <div class="card-body">
                     <h2 class="h6 mb-3">Tickets par statut</h2>
-                    <canvas id="statusChart"></canvas>
+                    <canvas id="statusChart" style="height: 280px"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card" style="height: 360px">
                 <div class="card-body">
                     <h2 class="h6 mb-3">Tickets par priorité</h2>
-                    <canvas id="priorityChart"></canvas>
+                    <canvas id="priorityChart" style="height: 280px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3 mt-1">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Derniers tickets mis à jour</h2>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Titre</th>
+                                    <th>Statut</th>
+                                    <th>Priorité</th>
+                                    <th>Mis à jour</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for t in recentTickets %}
+                                <tr>
+                                    <td>{{ t.id }}</td>
+                                    <td>{{ t.title ?? '—' }}</td>
+                                    <td><span class="badge bg-info">{{ t.status ?? '—' }}</span></td>
+                                    <td><span class="badge bg-warning text-dark">{{ t.priority ?? '—' }}</span></td>
+                                    <td>{{ t.updatedAt ? t.updatedAt|date('d/m/Y H:i') : '—' }}</td>
+                                    <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ path('tech_ticket_show', {id: t.id}) }}">Ouvrir</a></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="6" class="text-center text-muted py-4">Aucun ticket pour le moment.</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const statusData = {{ byStatus|json_encode|raw }};
 const priorityData = {{ byPriority|json_encode|raw }};
-
 new Chart(document.getElementById('statusChart'), {
     type: 'bar',
-    data: {
-        labels: Object.keys(statusData),
-        datasets: [{
-            label: 'Tickets',
-            data: Object.values(statusData),
-            backgroundColor: '#0d6efd'
-        }]
-    },
+    data: { labels: Object.keys(statusData), datasets: [{ label: 'Tickets', data: Object.values(statusData), backgroundColor: '#0d6efd' }] },
     options: { responsive: true, maintainAspectRatio: false }
 });
-
 new Chart(document.getElementById('priorityChart'), {
     type: 'doughnut',
-    data: {
-        labels: Object.keys(priorityData),
-        datasets: [{
-            data: Object.values(priorityData),
-            backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#dc3545']
-        }]
-    },
+    data: { labels: Object.keys(priorityData), datasets: [{ data: Object.values(priorityData), backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#dc3545'] }] },
     options: { responsive: true, maintainAspectRatio: false }
 });
 </script>
 {% endblock %}
-

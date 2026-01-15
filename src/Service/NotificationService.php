@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Ticket;
 use App\Entity\TicketComment;
-use App\Entity\User;
 use Psr\Log\LoggerInterface;
 
 class NotificationService
@@ -13,23 +12,24 @@ class NotificationService
     {
     }
 
-    public function notifyAssignment(User $tech, Ticket $ticket): void
+    public function notifyAssignment($tech, Ticket $ticket): void
     {
+        $name = \is_object($tech) && method_exists($tech, 'getUserIdentifier') ? $tech->getUserIdentifier() : (string) $tech;
         $this->logger->info(sprintf(
             '[NOTIF] Ticket #%d assigné au technicien %s',
             $ticket->getId(),
-            $tech->getUserIdentifier()
+            $name
         ));
     }
 
-    public function notifyComment(User $tech, Ticket $ticket, TicketComment $comment): void
+    public function notifyComment($tech, Ticket $ticket, TicketComment $comment): void
     {
+        $name = \is_object($tech) && method_exists($tech, 'getUserIdentifier') ? $tech->getUserIdentifier() : (string) $tech;
         $this->logger->info(sprintf(
             '[NOTIF] Nouveau commentaire sur ticket #%d par %s: %s',
             $ticket->getId(),
-            $tech->getUserIdentifier(),
+            $name,
             mb_substr($comment->getContent(), 0, 120)
         ));
     }
 }
-

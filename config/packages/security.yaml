@@ -2,10 +2,19 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\InMemoryUser: 'plaintext'
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        users_in_memory:
+            memory:
+                users:
+                    tech:
+                        password: 'technicien'
+                        roles: ['ROLE_TECHNICIAN']
+                    admin:
+                        password: 'admin123'
+                        roles: ['ROLE_ADMIN']
 
     firewalls:
         dev:
@@ -15,6 +24,16 @@ security:
         main:
             lazy: true
             provider: users_in_memory
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                username_parameter: _username
+                password_parameter: _password
+                default_target_path: app_tech_dashboard
+                always_use_default_target_path: true
+            logout:
+                path: app_logout
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -24,8 +43,8 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/technician, roles: ROLE_TECHNICIAN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
     security:

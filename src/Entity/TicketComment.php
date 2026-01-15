@@ -17,9 +17,8 @@ class TicketComment
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Ticket $ticket = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
+    #[ORM\Column(type: 'string', length: 180)]
+    private string $authorUsername = '';
 
     #[ORM\Column(type: 'text')]
     private string $content = '';
@@ -43,14 +42,14 @@ class TicketComment
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function getAuthorUsername(): string
     {
-        return $this->author;
+        return $this->authorUsername;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthorUsername(string $authorUsername): self
     {
-        $this->author = $author;
+        $this->authorUsername = $authorUsername;
         return $this;
     }
 
@@ -76,4 +75,3 @@ class TicketComment
         return $this;
     }
 }
-
