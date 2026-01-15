@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes tickets{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <h1 class="h3 mb-3">Mes tickets assignés</h1>
+
+    <form method="get" class="card p-3 mb-3">
+        <div class="row g-2">
+            <div class="col-md-3">
+                <input type="text" name="status" value="{{ filters.status }}" class="form-control" placeholder="Statut">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="priority" value="{{ filters.priority }}" class="form-control" placeholder="Priorité">
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="from" value="{{ filters.from }}" class="form-control" placeholder="Du">
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="to" value="{{ filters.to }}" class="form-control" placeholder="Au">
+            </div>
+        </div>
+        <div class="mt-2 text-end">
+            <button class="btn btn-primary">Filtrer</button>
+            <a href="{{ path('tech_ticket_index') }}" class="btn btn-outline-secondary">Réinitialiser</a>
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Titre</th>
+                        <th>Statut</th>
+                        <th>Priorité</th>
+                        <th>Demandeur</th>
+                        <th>Mis à jour</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for t in tickets %}
+                    <tr>
+                        <td>{{ t.id }}</td>
+                        <td>{{ t.title ?? '—' }}</td>
+                        <td><span class="badge bg-info">{{ t.status ?? '—' }}</span></td>
+                        <td><span class="badge bg-warning text-dark">{{ t.priority ?? '—' }}</span></td>
+                        <td>{{ t.requester ? (t.requester.fullName ?? t.requester.userIdentifier) : '—' }}</td>
+                        <td>{{ t.updatedAt ? t.updatedAt|date('d/m/Y H:i') : '—' }}</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ path('tech_ticket_show', {id: t.id}) }}">Détails</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Aucun ticket assigné.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord technicien{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <h1 class="h3 mb-3">Mon tableau de bord</h1>
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6">{{ total }}</div>
+                    <div class="text-muted">Tickets assignés</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="display-6">
+                        {% set avg = (avgResolutionSeconds / 3600)|round(1) %}
+                        {{ avg }} h
+                    </div>
+                    <div class="text-muted">Temps moyen de résolution</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Tickets par statut</h2>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Tickets par priorité</h2>
+                    <canvas id="priorityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const statusData = {{ byStatus|json_encode|raw }};
+const priorityData = {{ byPriority|json_encode|raw }};
+
+new Chart(document.getElementById('statusChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(statusData),
+        datasets: [{
+            label: 'Tickets',
+            data: Object.values(statusData),
+            backgroundColor: '#0d6efd'
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+
+new Chart(document.getElementById('priorityChart'), {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(priorityData),
+        datasets: [{
+            data: Object.values(priorityData),
+            backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#dc3545']
+        }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+});
+</script>
+{% endblock %}
+
