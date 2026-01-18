@@ -13,11 +13,8 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         if ($this->getUser()) {
-            if ($this->isGranted('ROLE_TECHNICIAN')) {
+            if ($this->isGranted('ROLE_TECHNICIAN') || $this->isGranted('ROLE_ADMIN')) {
                 return $this->redirectToRoute('app_tech_dashboard');
-            }
-            if ($this->isGranted('ROLE_ADMIN')) {
-                return $this->redirectToRoute('app_admin_dashboard');
             }
             return $this->redirectToRoute('app_home');
         }

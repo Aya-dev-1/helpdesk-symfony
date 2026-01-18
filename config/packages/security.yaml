@@ -9,12 +9,12 @@ security:
         users_in_memory:
             memory:
                 users:
-                    tech:
+                    'tech@helpdesk.com':
                         password: 'technicien'
                         roles: ['ROLE_TECHNICIAN']
                     admin:
                         password: 'admin123'
-                        roles: ['ROLE_ADMIN']
+                        roles: ['ROLE_ADMIN', 'ROLE_TECHNICIAN']
 
     firewalls:
         dev:
